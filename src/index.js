@@ -1,12 +1,15 @@
 /**
- * Welcome to Cloudflare Workers! This is your first worker.
+ * Simple GTPS Host and Connection Counter using KV store in Cloudflare Workers
  *
+ * - Edit the IP address in line 12.
  * - Run `npm run dev` in your terminal to start a development server
  * - Open a browser tab at http://localhost:8787/ to see your worker in action
  * - Run `npm run deploy` to publish your worker
  *
  * Learn more at https://developers.cloudflare.com/workers/
  */
+
+const IP = '127.0.0.1';
 
 /**
  * @typedef {Object} Env
@@ -52,13 +55,8 @@ export default {
 			await kv.put('totalConnects', totalConnects);
 			await kv.put(`todayConnects-${currentDate}`, todayConnects);
 			await kv.put(`monthConnects-${currentMonth}`, monthConnects);
-			const responseText = `167.71.220.174 growtopia1.com
-167.71.220.174 growtopia2.com
-167.71.220.174 www.growtopia1.com
-167.71.220.174 www.growtopia2.com
-167.71.220.174 akbarr.dev
-167.71.220.174 nevata.server`;
-
+			const responseText = `${IP} growtopia1.com\n${IP} growtopia2.com\n${IP} www.growtopia1.com
+${IP} www.growtopia2.com\n${IP} akbarr.dev\n${IP} nevata.server`;
 			return new Response(responseText, {
 				headers: { 'Content-Type': 'text/plain' },
 			});
