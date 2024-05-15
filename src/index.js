@@ -8,8 +8,7 @@
  *
  * Learn more at https://developers.cloudflare.com/workers/
  */
-
-const IP = '127.0.0.1';
+import config from './config.js';
 
 /**
  * @typedef {Object} Env
@@ -55,8 +54,8 @@ export default {
 			await kv.put('totalConnects', totalConnects);
 			await kv.put(`todayConnects-${currentDate}`, todayConnects);
 			await kv.put(`monthConnects-${currentMonth}`, monthConnects);
-			const responseText = `${IP} growtopia1.com\n${IP} growtopia2.com\n${IP} www.growtopia1.com
-${IP} www.growtopia2.com\n${IP} akbarr.dev\n${IP} nevata.server`;
+			const responseText = `${config.IP} growtopia1.com\n${config.IP} growtopia2.com\n${config.IP} www.growtopia1.com
+${config.IP} www.growtopia2.com\n${config.IP} akbarr.dev\n${config.IP} nevata.server`;
 			return new Response(responseText, {
 				headers: { 'Content-Type': 'text/plain' },
 			});
