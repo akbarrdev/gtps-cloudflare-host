@@ -1,15 +1,13 @@
 /**
  * Simple GTPS Host and Connection Counter using KV store in Cloudflare Workers
  *
- * - Edit the IP address in line 12.
+ * - Edit the IP address in wrangler.toml.
  * - Run `npm run dev` in your terminal to start a development server
  * - Open a browser tab at http://localhost:8787/ to see your worker in action
  * - Run `npm run deploy` to publish your worker
  *
  * Learn more at https://developers.cloudflare.com/workers/
  */
-import config from './config.js';
-
 /**
  * @typedef {Object} Env
  */
@@ -22,7 +20,7 @@ export default {
 	 */
 	async fetch(request, env, ctx) {
 		const url = new URL(request.url);
-		const kv = env.Nevata;
+		const kv = env.KV;
 
 		const now = new Date();
 		const currentDate = now.toLocaleDateString('default', { day: 'numeric' });
@@ -31,6 +29,23 @@ export default {
 		let totalConnects = (await kv.get(`totalConnects`)) || 0;
 		let todayConnects = (await kv.get(`todayConnects-${currentDate}`)) || 0;
 		let monthConnects = (await kv.get(`monthConnects-${currentMonth}`)) || 0;
+		console.log(request);
+		if (request.method.toUpperCase() === 'POST') {
+			console.log(request);
+			const responseText = `server|${env.SERVER_IP}
+port|${env.SERVER_PORT}
+type|1
+maint|Server is under maintenance - GTPS Host using Cloudflare Workers by Akbarrdev.
+
+beta_server|${env.SERVER_IP}
+beta_port|${env.SERVER_PORT}
+beta_type|1
+meta|localhost
+RTENDMARKERBS1001`;
+			if (url.pathname == "/growtopia/server_data.php") {
+				return new Response(responseText);
+			}
+		}
 
 		if (url.pathname === '/totalconnect') {
 			const data = {
@@ -54,27 +69,28 @@ export default {
 			await kv.put('totalConnects', totalConnects);
 			await kv.put(`todayConnects-${currentDate}`, todayConnects);
 			await kv.put(`monthConnects-${currentMonth}`, monthConnects);
-			const responseText = `${config.IP} growtopia1.com\n${config.IP} growtopia2.com\n${config.IP} www.growtopia1.com
-${config.IP} www.growtopia2.com\n${config.IP} akbarr.dev\n${config.IP} nevata.server`;
+			const responseText = `${env.SERVER_IP} growtopia1.com\n${env.SERVER_IP} growtopia2.com\n${env.SERVER_IP} www.growtopia1.com
+${env.SERVER_IP} www.growtopia2.com\n${env.SERVER_IP} akbarr.dev\n${env.SERVER_IP} nevata.server`;
 			return new Response(responseText, {
-				headers: { 'Content-Type': 'text/plain' },
+				status: 418,
+				statusText: 'Nevata Private Server',
+				headers: { 
+					'Content-Type': 'text/plain',
+				 },
 			});
 		}
 	},
 };
 
 async function clearOldData(env) {
-	const kv = env.Nevata;
+	const kv = env.KV;
 	const now = new Date();
 	const currentDate = now.toLocaleDateString('default', { day: 'numeric' });
 	// const currentMonth = now.toLocaleString('default', { month: 'long' });
 	const listKeys = await kv.list();
 	const keys = [...listKeys.keys];
-	let deletedKeys;
+	let deletedKeys = '';
 	console.log(listKeys);
-
-	// await kv.delete(`todayConnects-${currentDate}`);
-	// await kv.delete(`monthConnects-${currentMonth}`);
 
 	for (const key of keys) {
 		if (key.name.startsWith('todayConnects-') && !key.name.includes(currentDate)) {

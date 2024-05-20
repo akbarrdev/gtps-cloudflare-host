@@ -1,4 +1,11 @@
 kv_namespaces = [
-{ binding = "namespace", id = "id" }
+{ binding = "KV", id = "key-kv-mu" }
 ]
+
 compatibility_date = "2024-04-19"
+name = "nevata"
+main = "src/index.js"
+
+[vars]
+SERVER_IP = "128.199.77.156"
+SERVER_PORT = "888"

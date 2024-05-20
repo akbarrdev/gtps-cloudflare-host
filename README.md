@@ -33,7 +33,7 @@ The primary purpose of this code is to provide a stable endpoint for GTPS hostin
     ```
     wrangler kv:namespace create <new-namespace-name>
     ```
-10. Copy the provided bracket and paste it into `wrangler.toml`.
+10. Copy the provided bracket and paste it into `wrangler.toml`, dont forget to edit your `wrangler.toml`.
 11. To run the worker locally, use 
     ```
     npx wrangler run dev src/index
