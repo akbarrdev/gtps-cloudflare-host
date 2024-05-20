@@ -1,5 +1,5 @@
 kv_namespaces = [
-{ binding = "KV", id = "key-kv-mu" }
+{ binding = "KV", id = "your-key" }
 ]
 
 compatibility_date = "2024-04-19"
